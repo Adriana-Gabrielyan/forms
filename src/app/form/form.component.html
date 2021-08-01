@@ -1,0 +1,64 @@
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+  <div
+    formArrayName="credentials"
+    *ngFor="
+      let creds of userForm.controls.credentials?.value;
+      let i = index;
+      trackBy: trackByFn
+    "
+  >
+    <ng-container [formGroupName]="i">
+      <div class="form-group">
+        <label for="" class="form-label">First Name</label>
+        <input type="text" class="form-control" formControlName="firstName" />
+        <!-- <div *ngIf="userForm.controls.credentials.controls[0].controls['firstName'].errors">
+          <div *ngIf="userForm.controls.credentials.controls['firstName'].errors.required" class="form-error">
+            Please enter a name
+          </div>
+          <div *ngIf="userForm.controls.credentials.controls['firstName'].errors.minlength" class="form-error">
+            min length for name is 3
+          </div>
+        </div> -->
+      </div>
+      <div class="form-group">
+        <label for="" class="form-label">Last Name</label>
+        <input type="text" class="form-control" formControlName="lastName" />
+      </div>
+      <div class="form-group">
+        <label for="" class="form-label">Email</label>
+        <input type="email" class="form-control" formControlName="email" />
+      </div>
+      <div class="form-group">
+        <label for="" class="form-label">Zip Code</label>
+        <input type="text" class="form-control" formControlName="zip" />
+      </div>
+      <div class="form-group">
+        <label for="" class="form-label">Password</label>
+        <input
+          type="password"
+          class="form-control"
+          formControlName="password"
+        />
+      </div>
+      <div class="form-group">
+        <label for="" class="form-label">Confirm Password</label>
+        <input
+          type="password"
+          class="form-control"
+          formControlName="confirm_password"
+        />
+      </div>
+      <button type="button" (click)="addForm()">Add</button>
+
+      <button *ngIf="i > 0" type="button" (click)="deleteForm(i)">
+        Delete
+      </button>
+    </ng-container>
+  </div>
+
+  <ng-template [ngIf]="userForm.controls.credentials?.value.length">
+    <div class="form-group">
+      <button type="submit">Submit</button>
+    </div>
+  </ng-template>
+</form>

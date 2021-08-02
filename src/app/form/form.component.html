@@ -1,64 +1,189 @@
-<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-  <div
-    formArrayName="credentials"
-    *ngFor="
-      let creds of userForm.controls.credentials?.value;
-      let i = index;
-      trackBy: trackByFn
-    "
-  >
-    <ng-container [formGroupName]="i">
-      <div class="form-group">
-        <label for="" class="form-label">First Name</label>
-        <input type="text" class="form-control" formControlName="firstName" />
-        <!-- <div *ngIf="userForm.controls.credentials.controls[0].controls['firstName'].errors">
-          <div *ngIf="userForm.controls.credentials.controls['firstName'].errors.required" class="form-error">
-            Please enter a name
+<form [formGroup]="usersForm" (ngSubmit)="onSubmit()">
+  <div formArrayName="users">
+    <ng-container
+      *ngFor="let userFormGroup of userFormGroups.controls; let i = index"
+    >
+      <div class="form" [formGroupName]="i">
+        <p class="alert-success" *ngIf="!getValidity(i)">This form is valid you can add one more</p>
+        <div class="form-group">
+          <label for="" class="form-label">First Name</label>
+          <input type="text" class="form-control" formControlName="firstName" />
+          <div
+            *ngIf="
+              allowToAdd &&
+              userFormGroups.get('0')?.get('firstName')?.errors
+            "
+            class="invalid-feedback"
+          >
+            <small
+              *ngIf="
+                userFormGroups.get('0')?.get('firstName')?.errors?.required
+              "
+            >
+              First Name is required
+            </small>
+            <small
+              *ngIf="
+                userFormGroups.get('0')?.get('firstName')?.errors
+                  ?.minlength
+              "
+            >
+              Min length for name is 3
+            </small>
           </div>
-          <div *ngIf="userForm.controls.credentials.controls['firstName'].errors.minlength" class="form-error">
-            min length for name is 3
+        </div>
+        <div class="form-group">
+          <label for="" class="form-label">Last Name</label>
+          <input type="text" class="form-control" formControlName="lastName" />
+          <div
+            *ngIf="
+              allowToAdd &&
+              userFormGroups.get('0')?.get('lastName')?.errors
+            "
+            class="invalid-feedback"
+          >
+            <small
+              *ngIf="
+                userFormGroups.get('0')?.get('lastName')?.errors?.required
+              "
+            >
+              First Name is required
+            </small>
+            <small
+              *ngIf="
+                userFormGroups.get('0')?.get('lastName')?.errors?.minlength
+              "
+            >
+              Min length is 3
+            </small>
           </div>
-        </div> -->
-      </div>
-      <div class="form-group">
-        <label for="" class="form-label">Last Name</label>
-        <input type="text" class="form-control" formControlName="lastName" />
-      </div>
-      <div class="form-group">
-        <label for="" class="form-label">Email</label>
-        <input type="email" class="form-control" formControlName="email" />
-      </div>
-      <div class="form-group">
-        <label for="" class="form-label">Zip Code</label>
-        <input type="text" class="form-control" formControlName="zip" />
-      </div>
-      <div class="form-group">
-        <label for="" class="form-label">Password</label>
-        <input
-          type="password"
-          class="form-control"
-          formControlName="password"
-        />
-      </div>
-      <div class="form-group">
-        <label for="" class="form-label">Confirm Password</label>
-        <input
-          type="password"
-          class="form-control"
-          formControlName="confirm_password"
-        />
-      </div>
-      <button type="button" (click)="addForm()">Add</button>
+        </div>
+        <div class="form-group">
+          <label for="" class="form-label">Email</label>
+          <input type="email" class="form-control" formControlName="email" />
+          <div
+            *ngIf="
+              allowToAdd && userFormGroups.get('0')?.get('email')?.errors
+            "
+            class="invalid-feedback"
+          >
+            <small
+              *ngIf="
+                userFormGroups.get('0')?.get('email')?.errors?.required
+              "
+            >
+              Email is required
+            </small>
+            <small
+              *ngIf="
+                userFormGroups.get('0')?.get('email')?.errors?.pattern
+              "
+            >
+              Email must match to pattern
+            </small>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="" class="form-label">Zip Code</label>
+          <input type="text" class="form-control" formControlName="zip" />
+          <div
+            *ngIf="
+              allowToAdd && userFormGroups.get('0')?.get('zip')?.errors
+            "
+            class="invalid-feedback"
+          >
+            <small
+              *ngIf="userFormGroups.get('0')?.get('zip')?.errors?.required"
+            >
+              Zip Code is required
+            </small>
+            <small
+              *ngIf="
+                userFormGroups.get('0')?.get('zip')?.errors?.maxLength
+              "
+            >
+              Zip Code max length is 10
+            </small>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="" class="form-label">Password</label>
+          <input
+            type="password"
+            class="form-control"
+            formControlName="password"
+          />
+          <div
+            *ngIf="
+              allowToAdd &&
+              userFormGroups.get('0')?.get('password')?.errors
+            "
+            class="invalid-feedback"
+          >
+            <small
+              *ngIf="
+                userFormGroups.get('0')?.get('password')?.errors?.required
+              "
+            >
+              Password is required
+            </small>
+          
+            <small
+            *ngIf="
+              userFormGroups.get('0')?.get('password')?.errors?.pattern
+            "
+          >
+          Password must be at least 6 characters and contain lowercase, uppercase, number and symbol
 
-      <button *ngIf="i > 0" type="button" (click)="deleteForm(i)">
-        Delete
-      </button>
+          </small>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="" class="form-label">Confirm Password</label>
+          <input
+            type="password"
+            class="form-control"
+            formControlName="confirm_password"
+          />
+          <div
+            *ngIf="
+              allowToAdd &&
+              userFormGroups.get('0')?.get('confirm_password')?.errors
+            "
+            class="invalid-feedback"
+          >
+            <small
+              *ngIf="
+                userFormGroups.get('0')?.get('confirm_password')?.errors
+                  ?.required
+              "
+            >
+              Confirm password is required
+            </small>
+            <small
+              *ngIf="
+                userFormGroups.get('0')?.get('confirm_password')?.errors
+                  ?.mustMatch
+              "
+            >
+              Passwords must match
+            </small>
+          </div>
+        </div>
+        <div class="form-group text-right">
+          <button type="button" (click)="addForm()" class="btn">
+            Add new user
+          </button>
+          <ng-container *ngIf="i > 0">
+            <button type="button" (click)="deleteForm(i)" class="btn btn--red">
+              Remove
+            </button>
+          </ng-container>
+        </div>
+      </div>
     </ng-container>
-  </div>
-
-  <ng-template [ngIf]="userForm.controls.credentials?.value.length">
-    <div class="form-group">
-      <button type="submit">Submit</button>
+    <div class="form-group text-right">
+      <button type="submit" class="btn">Submit</button>
     </div>
-  </ng-template>
+  </div>
 </form>
